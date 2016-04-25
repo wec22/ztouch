@@ -15,6 +15,16 @@ function ztouch:initialize()
     self.axes={}
     self.buttons={}
 end
+function ztouch:addButton(button,name)
+    self.buttons[name]=button
+end
+function ztouch:draw()
+    for _,v in pairs(self.buttons) do
+        v:draw()
+    end
+end
+
+
 
 local button=class("button")
 function button:initialize(x,y, shape, r, text)--shape choices: square, circle
@@ -23,7 +33,6 @@ function button:initialize(x,y, shape, r, text)--shape choices: square, circle
     self.shape=shape    --shape of the button
     self.radius=r       --radius or side length
     self.text=text      --text to display inside the button
-
 end
 
 function button:draw()
@@ -55,6 +64,25 @@ function button:detect()
         end
     end
 end
+
+function button:pressed()
+    if self.shape=="circle" then
+        for _,v in ipairs(love.touch.getTouches()) do
+            if insideCircle(self.x, self.y, self.radius, love.touch.getPosition(v)) then
+                return true
+            end
+        end
+        return false
+    elseif self.shape=="square" then
+        for _,v in ipairs(love.touch.getTouches()) do
+            if insideSquare(self.x, self.y, self.radius, love.touch.getPosition(v)) then
+                return true
+            end
+        end
+        return false
+    end
+end
+
 
 
 local axis=class("axis")
